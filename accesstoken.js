@@ -1,29 +1,28 @@
-
+const uniqueID = require('./uniqueID.js')
 const axios = require('axios');
-const {CLIENT_ID, CLIENT_SECRET} = process.env;
+const {CLIENT_ID} = process.env;
 
-const getCode = () => {
 
-    const auth = {
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET
-    }
+const urlToken = 'https://www.deviantart.com/oauth2/authorize';
 
-    const data = new URLSearchParams();
-    data.append('grant_type','client_credentials')
+const data = new URLSearchParams({
+    response_type: 'token',
+    client_id: CLIENT_ID,
+    redirect_uri: 'https://localhost:3000', // Reemplazar con tu propia redirect_uri
+    state: uniqueID,
+});
 
-    return axios.post('https://www.deviantart.com/oauth2/token', data, {
-        auth: auth }).then(response => {
-        return response.data.access_token;
-        
-    })
-}
+const authUrl = `${urlToken}?${data.toString()}`;
 
-getCode().then(token => {
-    console.log(token);
-  }).catch(error => {
-    console.error('Error al obtener el token de acceso:', error);
-  });
+
+console.log('Redirecciona al usuario a la siguiente URL:');
+console.log(authUrl);
+
+// getCode().then(token => {
+//     console.log(token);
+//   }).catch(error => {
+//     console.error('Error al obtener el token de acceso:', error);
+//   });
 
 module.exports = {
     sendResponse(req, res) {
